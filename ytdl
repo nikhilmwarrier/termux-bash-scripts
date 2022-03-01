@@ -1,6 +1,9 @@
 #!/bin/bash
 
 query=$(printf '%s' "$*" | tr ' ' '+')
+
+if [ -z $query ]; then exit 0; fi
+
 mkdir -p "$HOME/.cache/yt"
 curl -s "https://yewtu.be/search?q=%$query" > "$HOME/.cache/yt/temp.html"
 cachedpage="cat $HOME/.cache/yt/temp.html"
@@ -19,9 +22,13 @@ done
 
 vid=$(echo -e $titlelist | uniq | fzf | awk 'BEGIN { FS = "\t\t" } ; {print $2}')
 
+if [ -z $vid ]; then exit 0; fi
+
 url="https://youtube.com/$vid"
 
 res=$(echo -e "144\n240\n360\n480\n720" | fzf)
+
+if [ -z $res ]; then exit 0; fi
 
 rm "$HOME/.cache/yt/temp.html"
 

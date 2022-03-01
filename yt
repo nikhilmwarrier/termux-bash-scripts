@@ -1,10 +1,12 @@
 #!/bin/bash
 
 query=$(printf '%s' "$*" | tr ' ' '+')
+
+if [ -z $query ]; then exit 0; fi
+
 mkdir -p "$HOME/.cache/yt"
 curl -s "https://yewtu.be/search?q=%$query" > "$HOME/.cache/yt/temp.html"
 cachedpage="cat $HOME/.cache/yt/temp.html"
-echo $cachedpage
 vidlist=$( $cachedpage | grep -Eo "watch\?v=.{11}")
 
 titlelist=''
@@ -19,6 +21,8 @@ do
 done
 
 vid=$(echo -e $titlelist | uniq | fzf | awk 'BEGIN { FS = "\t\t" } ; {print $2}')
+
+if [ -z $vid ]; then exit 0; fi
 
 url="https://youtube.com/$vid"
 # program=$(printf "mpv\ntermux-open-url" | fzf)
