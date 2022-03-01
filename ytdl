@@ -21,9 +21,7 @@ done
 vid=$(echo -e $titlelist | uniq | fzf | awk 'BEGIN { FS = "\t\t" } ; {print $2}')
 
 url="https://youtube.com/$vid"
-# program=$(printf "mpv\ntermux-open-url" | fzf)
-program="termux-open-url"
 
-printf "$title\n$url\n"
 rm "$HOME/.cache/yt/temp.html"
-bash $program $url
+
+yt-dlp -S "res:144" "$url"
