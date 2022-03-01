@@ -1,10 +1,9 @@
 #!/bin/bash
 
 query=$(printf '%s' "$*" | tr ' ' '+')
-
 mkdir -p "$HOME/.cache/yt"
 curl -s "https://yewtu.be/search?q=%$query" > "$HOME/.cache/yt/temp.html"
-cachedpage='cat $HOME/.cache/yt/temp.html'
+cachedpage="cat $HOME/.cache/yt/temp.html"
 vidlist=$( $cachedpage | grep -Eo "watch\?v=.{11}")
 
 titlelist=''
@@ -12,7 +11,7 @@ titlelist=''
 for i in $vidlist
 do
 	title="["`$cachedpage | pup 'a[href="/'$i'"] + div p.channel-name text{}'`"] "`$cachedpage | pup 'a[href="/'$i'"] > p text{}'`"\t\t$i"
-	if ! [[ $titlelist =$HOME $i ]]
+	if ! [[ $titlelist =~ $i ]]
 	then 
 		titlelist=$titlelist"\n"$title
 	fi
@@ -22,6 +21,8 @@ vid=$(echo -e $titlelist | uniq | fzf | awk 'BEGIN { FS = "\t\t" } ; {print $2}'
 
 url="https://youtube.com/$vid"
 
+res=$(echo -e "144\n240\n360\n480\n720" | fzf)
+
 rm "$HOME/.cache/yt/temp.html"
 
-yt-dlp -S "res:144" "$url"
+yt-dlp -S "res:$res" $url
